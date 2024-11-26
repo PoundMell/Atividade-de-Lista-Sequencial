@@ -1,4 +1,5 @@
 #include "ListaOrdenada.h"
+#include <stdlib.h>
 
 bool resize(LISTA* l, int novaCapacidade) { // Nova função
   if (novaCapacidade < l->nroElem) return false; // Caso seja menor que o número de elementos
@@ -75,7 +76,7 @@ TIPOCHAVE ultimoElem(LISTA* l) {
 } /* ultimoElem */
 
 /* Retornar a chave do elemento que está na posição n da LISTA. Lembre-se que as posicoes do
-   arranjo A vao de 0 a MAX-1  */
+   arranjo A vao de 0 a l->capacidade-1  */
 TIPOCHAVE enesimoElem(LISTA* l, int n) {
   if( (n >= 0) && (n < l->nroElem)) return l->A[n].chave ;
   else return ERRO;
@@ -91,7 +92,7 @@ int buscaSequencial(LISTA* l, TIPOCHAVE ch) {
   return ERRO; // não achou
 } /* buscaSequencial */
 
-/* Busca sequencial em lista COM SENTINELA (vetor criado com MAX+1 posições) */
+/* Busca sequencial em lista COM SENTINELA (vetor criado com l->capacidade+1 posições) */
 int buscaSentinela(LISTA* l, TIPOCHAVE ch) {
   int i = 0;
   l->A[l->nroElem].chave = ch; // sentinela
@@ -100,7 +101,7 @@ int buscaSentinela(LISTA* l, TIPOCHAVE ch) {
   else return i;
 } /* buscaSentinela */
 
-/* Busca sequencial em lista COM SENTINELA (vetor criado com MAX+1 posições) 
+/* Busca sequencial em lista COM SENTINELA (vetor criado com l->capacidade+1 posições) 
    considerando o arranjo ordenado */
 int buscaSentinelaOrdenada(LISTA* l, TIPOCHAVE ch) {
   int i = 0;
@@ -149,21 +150,21 @@ bool excluirElemListaOrd(LISTA* l, TIPOCHAVE ch) {
 } /* excluirElemListaOrd */
 
 
-bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
-  if(l->nroElem >= MAX) return false; // lista cheia
-  int pos = l->nroElem;
-  while(pos > 0 && l->A[pos-1].chave > reg.chave) {
-    l->A[pos] = l->A[pos-1];
-    pos--;
-  }
-  l->A[pos] = reg;
-  l->nroElem++;
-  return true;
-} /* inserirElemListaOrd */
+// bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
+//   if(l->nroElem >= l->capacidade) return false; // lista cheia
+//   int pos = l->nroElem;
+//   while(pos > 0 && l->A[pos-1].chave > reg.chave) {
+//     l->A[pos] = l->A[pos-1];
+//     pos--;
+//   }
+//   l->A[pos] = reg;
+//   l->nroElem++;
+//   return true;
+// } /* inserirElemListaOrd */
 
 /* Inserção em lista ordenada usando busca binária sem duplicação */
 bool inserirElemListaOrdSemDup(LISTA* l, REGISTRO reg) {
-  if(l->nroElem >= MAX) return false; // lista cheia
+  if(l->nroElem >= l->capacidade) return false; // lista cheia
   int pos;
   pos = buscaBinaria(l,reg.chave);
   if(pos != ERRO) return false; // elemento já existe
