@@ -1,11 +1,49 @@
-// ListaOrdenada.c
 #include "ListaOrdenada.h"
 
+bool resize(LISTA* l, int novaCapacidade) { // Nova função
+  if (novaCapacidade < l->nroElem) return false; // Caso seja menor que o número de elementos
+  REGISTRO* novoArray = (REGISTRO*)realloc(l->A, novaCapacidade * sizeof(REGISTRO));
+  if (novoArray == NULL) return false; // Caso dê falha na realocação
+  l->A = novoArray;
+  l->capacidade = novaCapacidade;
+  return true;
+}
 
-/* Inicialização da lista sequencial (a lista já está criada e é apontada pelo endereço em l) */
-void inicializarLista(LISTA* l){
+void inicializarLista(LISTA* l) {
+  l->capacidade = 50; // Capacidade inicial
   l->nroElem = 0;
-} /* inicializarLista */
+  l->A = (REGISTRO*)malloc(l->capacidade * sizeof(REGISTRO)); // Primeira alocação
+}
+
+int tamanhoEmBytes(LISTA* l) {
+  return sizeof(LISTA) + (l->capacidade * sizeof(REGISTRO)); // Agora o retorno depende do tamanho dinâmico
+}
+
+void reinicializarLista(LISTA* l) {
+  free(l->A); // Libera a memória
+  inicializarLista(l); // Recria a lista com capacidade inicial
+}
+
+bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
+  // Redimensiona para o dobro da capacidade se estiver cheia
+  if (l->nroElem >= l->capacidade) {
+    resize(l, l->capacidade * 2); 
+  }
+  int pos = l->nroElem;
+  while (pos > 0 && l->A[pos-1].chave > reg.chave) {
+    l->A[pos] = l->A[pos-1];
+    pos--;
+  }
+  l->A[pos] = reg;
+  l->nroElem++;
+  // Se o número de elementos cair para 25% da capacidade, reduz a capacidade
+  if (l->nroElem <= l->capacidade / 4) {
+    resize(l, l->capacidade / 2);
+  }
+  return true;
+}
+
+// Abaixo, os métodos seguem iguais
 
 
 /* Exibição da lista sequencial */
@@ -21,15 +59,6 @@ void exibirLista(LISTA* l){
 int tamanho(LISTA* l) {
   return l->nroElem;
 } /* tamanho */
-
-/* Retornar o tamanho em bytes da lista. Neste caso, isto nao depende do numero
-   de elementos que estao sendo usados, pois a alocacao de memoria eh estatica.
-   A priori, nao precisariamos do ponteiro para a lista, vamos utiliza-lo apenas
-   porque teremos as mesmas funcoes para listas ligadas.   
-*/
-int tamanhoEmBytes(LISTA* l) {
-  return sizeof(LISTA);
-} /* tamanhoEmBytes */
 
 /* Retornar a chave do primeiro elemento da lista sequencial (caso haja) e ERRO
    caso a lista esteja vazia */
@@ -52,12 +81,6 @@ TIPOCHAVE enesimoElem(LISTA* l, int n) {
   else return ERRO;
 } /* enesimoElem */
 
-/* Reinicializar a estrutura */
-void reinicializarLista(LISTA* l) {
-  l->nroElem = 0;
-} /* reinicializarLista */
-
-
 /* Busca sequencial em lista ordenada ou não SEM SENTINELA */
 int buscaSequencial(LISTA* l, TIPOCHAVE ch) {
   int i = 0;
@@ -67,7 +90,6 @@ int buscaSequencial(LISTA* l, TIPOCHAVE ch) {
   }
   return ERRO; // não achou
 } /* buscaSequencial */
-
 
 /* Busca sequencial em lista COM SENTINELA (vetor criado com MAX+1 posições) */
 int buscaSentinela(LISTA* l, TIPOCHAVE ch) {
@@ -127,7 +149,6 @@ bool excluirElemListaOrd(LISTA* l, TIPOCHAVE ch) {
 } /* excluirElemListaOrd */
 
 
-/* Inserção em lista ordenada usando busca binária permitindo duplicação */
 bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
   if(l->nroElem >= MAX) return false; // lista cheia
   int pos = l->nroElem;
@@ -139,8 +160,6 @@ bool inserirElemListaOrd(LISTA* l, REGISTRO reg) {
   l->nroElem++;
   return true;
 } /* inserirElemListaOrd */
-
-
 
 /* Inserção em lista ordenada usando busca binária sem duplicação */
 bool inserirElemListaOrdSemDup(LISTA* l, REGISTRO reg) {
