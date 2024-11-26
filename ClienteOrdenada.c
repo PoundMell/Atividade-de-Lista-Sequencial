@@ -1,5 +1,6 @@
 // main.c
 #include "ListaOrdenada.h"
+#include "ListaOrdenada.c"
 
 int main() {
   LISTA lista;
