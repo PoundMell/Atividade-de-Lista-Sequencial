@@ -1,9 +1,8 @@
-// listaSequencialOrdenada.h
 #ifndef LISTA_SEQUENCIAL_ORDENADA_H
 #define LISTA_SEQUENCIAL_ORDENADA_H
 
 #include <stdio.h>
-#define MAX 50
+// "#define MAX 50" inutilizado
 #define ERRO -1
 #define bool int
 #define true 1
@@ -13,15 +12,16 @@ typedef int TIPOCHAVE;
 
 typedef struct {
   TIPOCHAVE chave;
-  // outros campos...
 } REGISTRO;
 
 typedef struct {
-  REGISTRO A[MAX+1];
+  REGISTRO* A; // Ponteiro Dinâmico
   int nroElem;
+  int capacidade; // Capacidade máxima
 } LISTA;
 
-// Declaração das funções
+bool resize(LISTA* l, int novaCapacidade); // Nova função para redimensionamento
+
 void inicializarLista(LISTA* l);
 void exibirLista(LISTA* l);
 int tamanho(LISTA* l);
